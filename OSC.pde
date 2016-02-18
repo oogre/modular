@@ -18,6 +18,8 @@ class Osc implements ControlListener{
 	
 	float deltaX = 0;
 	float deltaY = 0;
+	float dXInc = 0;
+	float dYInc = 0;
 
 	Osc(PApplet self, int x, int y, String type) {
 		this.self = self;
@@ -132,13 +134,17 @@ class Osc implements ControlListener{
 			float x_norm_inc = inflateX / (float)i.width;
 			float y_norm_inc = inflateY / (float)i.height;
 			PVector inflate_vector = new PVector(0, 0);
+			float dX=0;
+			float dY=0;
 			for (int x = 0; x < i.width; x ++) {
 				this.update();
 				for (int y = 0; y < i.height; y ++) {
 					float inflate = inflateY == 0 && inflateX == 0 ? 1 : inflate_vector.magSq()/2f;
 					float V  = invert ? 1 - this.getValue() : this.getValue();
-					int X  = x + (int)deltaX + x; 
-					int Y = y + (int)deltaY; 
+					dX += dXInc;
+					dY += dYInc;
+					int X = (int) (deltaX + x + (int)dX); 
+					int Y = (int) (deltaY + y + (int)dY); ; 
 					if (X >= i.width || X < 0) X %= i.width;
 					if (Y >= i.height || Y < 0) Y %= i.height;
 					int N = min(max(X + (Y * i.width), 0), i.pixels.length-1);
@@ -164,13 +170,17 @@ class Osc implements ControlListener{
 			float x_norm_inc = inflateX / (float)i.width;
 			float y_norm_inc = inflateY / (float)i.height;
 			PVector inflate_vector = new PVector(0, 0);
+			float dX=0;
+			float dY=0;
 			for (int y = 0; y < i.height; y ++) {
 				this.update();
 				for (int x = 0; x < i.width; x ++) {
 					float inflate = inflateY == 0 && inflateX == 0 ? 1 : inflate_vector.magSq()/2f;
 					float V  = invert ? 1 - this.getValue(): this.getValue();
-					int X  = x + (int)deltaX; 
-					int Y = y + (int)deltaY; 
+					dX += dXInc;
+					dY += dYInc;
+					int X = (int) (deltaX + x + (int)dX); 
+					int Y = (int) (deltaY + y + (int)dY); ; 
 					if (X >= i.width || X < 0) X %= i.width;
 					if (Y >= i.height || Y < 0) Y %= i.height;
 					int N = min(max(X + (Y * i.width), 0), i.pixels.length-1);
@@ -202,7 +212,6 @@ class Osc implements ControlListener{
 				this.update();
 				float G = this.getValue();
 				PVector o = new PVector(G, G);
-				
 				for (int x = 0; x < i.width; x ++) {
 					float inflate = inflateY == 0 && inflateX == 0 ? 1 : inflate_vector.magSq()/2f;
 					PVector v = new PVector((float)x/(float)i.width, (float)y/(float)i.height);
@@ -210,8 +219,8 @@ class Osc implements ControlListener{
 					float V = G * sin((G + v.magSq())* TWO_PI);
 					V = min(max(V, 0), 1);
 					V = invert ? 1- V : V ;
-					dX += (float)1 * (float)mouseX/(float)width;
-					dY += (float)1 * (float)mouseY/(float)height;
+					dX += dXInc;
+					dY += dYInc;
 					int X = (int) (deltaX + x + (int)dX); 
 					int Y = (int) (deltaY + y + (int)dY); ; 
 					if (X >= i.width || X < 0) X %= i.width;
@@ -239,6 +248,8 @@ class Osc implements ControlListener{
 			float x_norm_inc = inflateX / (float)i.width;
 			float y_norm_inc = inflateY / (float)i.height;
 			PVector inflate_vector = new PVector(0, 0);
+			float dX=0;
+			float dY=0;
 			for (int x = 0; x < i.width; x ++) {
 				this.update();
 				float G = this.getValue();
@@ -250,8 +261,10 @@ class Osc implements ControlListener{
 					float V = G * sin((G + v.magSq())* TWO_PI);
 					V = min(max(V, 0), 1);
 					V = invert ? 1- V : V ;
-					int X  = x + (int)deltaX; 
-					int Y = y + (int)deltaY; 
+					dX += dXInc;
+					dY += dYInc;
+					int X = (int) (deltaX + x + (int)dX); 
+					int Y = (int) (deltaY + y + (int)dY); ; 
 					if (X >= i.width || X < 0) X %= i.width;
 					if (Y >= i.height || Y < 0) Y %= i.height;
 					int N = min(max(X + (Y * i.width), 0), i.pixels.length-1);
@@ -277,50 +290,33 @@ class Osc implements ControlListener{
 		boolean invert = cbxActive2.isSelected();
 		if (cbxActive1.isSelected()) {
 			i.loadPixels();
+			float x_norm_inc = inflateX / (float)i.width;
+			float y_norm_inc = inflateY / (float)i.height;
+			PVector inflate_vector = new PVector(0, 0);
+			float dX=0;
+			float dY=0;
 			for (int x = 0; x < i.width; x ++) {
 				this.update();
 				float o = offset;  
 				for (int y = 0; y < i.height; y ++) {
+					float inflate = inflateY == 0 && inflateX == 0 ? 1 : inflate_vector.magSq()/2f;
 					o += offset;
 					float V  = invert ? 1 - this.getValue(): this.getValue();
-					int n = x + y * i.width;
-					n += o;
-					if (n >= i.pixels.length-1)n -= i.pixels.length;
-					if (n < 0)n += i.pixels.length;
-					n = max(0, min(i.pixels.length-1, n));
-					i.pixels[n] = getColor(V);
+					dX += dXInc;
+					dY += dYInc;
+					int X = (int) (deltaX + x + (int)dX); 
+					int Y = (int) (deltaY + y + (int)dY); ; 
+					if (X >= i.width || X < 0) X %= i.width;
+					if (Y >= i.height || Y < 0) Y %= i.height;
+					int N = X + (Y * i.width);
+					N += o;
+					if (N >= i.pixels.length || N < 0)N %= i.pixels.length;
+					N = min(max(N, 0), i.pixels.length-1);
+					i.pixels[N] = getColor(inflate* V);
+					inflate_vector.y+= y_norm_inc;
 				}
-			}
-			i.updatePixels();
-		}
-		drawPreview(i.copy());
-		return i ;
-	}
-
-
-	PImage exponantRender () {
-		offset = 2 * (0.5-((float)mouseX /(float)width));
-		println(offset);
-		this.getControlValues();
-		osc.setPeriod(this.getPeriod());
-		PImage i = new PImage(p.width, p.height);
-		boolean invert = cbxActive2.isSelected();
-		if (cbxActive1.isSelected()) {
-			i.loadPixels();
-
-			for (int x = 0; x < i.width; x ++) {
-				this.update();
-				float o = offset;  
-				for (int y = 0; y < i.height; y ++) {
-					o += offset;
-					float V  = invert ? 1 - this.getValue(): this.getValue();
-					int n = x + y * i.width;
-					n += sq(o);
-					if (n >= i.pixels.length-1)n -= i.pixels.length;
-					if (n < 0)n += i.pixels.length;
-					n = max(0, min(i.pixels.length-1, n));
-					i.pixels[n] = getColor(V);
-				}
+				inflate_vector.x+= x_norm_inc;
+				inflate_vector.y= 0;
 			}
 			i.updatePixels();
 		}
@@ -357,6 +353,10 @@ class Osc implements ControlListener{
 			this.deltaX = value;
 		}else if(name == "deltaY"){
 			this.deltaY = value;
+		}else if(name == "dX"){
+			this.dXInc = value;
+		}else if(name == "dY"){
+			this.dYInc = value;
 		}
 	}
 	void tap1Event(String name, boolean state){

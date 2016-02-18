@@ -15,10 +15,12 @@ class Caleidoscop{
 	}
 
 	void setCenterX(float v){
-		this.ox = (int) (this.width / 2.0f) + (int) (this.width * v);
+		println("setCenterY : "+v);
+		this.ox = (int) (this.width * v);
 	}
 	void setCenterY(float v){
-		this.oy = (int) (this.height / 2.0f) + (int) (this.height * v);
+		println("setCenterY : "+v);
+		this.oy = (int) (this.height * v);
 	}
 	void setAlpha(int n){
 		alpha = TWO_PI/(float)n;

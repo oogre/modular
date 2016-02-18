@@ -97,31 +97,51 @@ class ControlChannel{
 			break;
 			case 5: /* knob2 */
 				if(chann == 1){
-					vw.setScale(zoom[int(value * ratio_ratio)]); 
-				}else if(chann == 2){
 					if(listeners.size()==0)
-						ca.setCenterX((2f * ((float)value/127f)) - 1f );
+						vw.setScale(zoom[int(value * ratio_ratio)]); 
 					else
-					for (ArrayList hl : listeners)
-							((ControlListener)hl.get(0)).knob2Event("inflateX", value / 12.7);
-				}else if(chann == 3){
+						for (ArrayList hl : listeners)
+								((ControlListener)hl.get(0)).knob2Event("dX", value / 12.7);
+				}
+				else if(chann == 5){
 					if(listeners.size()==0)
-						ca.setCenterY((2f * ((float)value/127f)) - 1f );
+						vw2.setScale(zoom[int(value * ratio_ratio)]); 
 					else
-					for (ArrayList hl : listeners)
-							((ControlListener)hl.get(0)).knob2Event("inflateY", value / 12.7);
-				}else if(chann == 4){
+						for (ArrayList hl : listeners)
+								((ControlListener)hl.get(0)).knob2Event("dY", value / 12.7);
+				}
+				else if(chann == 2){
 					ca.setAlpha(((int)(value / 6.35))*2); 
-				}else if(chann == 5){
-					for (ArrayList hl : listeners)
-							((ControlListener)hl.get(0)).knob2Event("deltaX", value * 2 );
-				}else if(chann == 6){
-					for (ArrayList hl : listeners)
-							((ControlListener)hl.get(0)).knob2Event("deltaY", value * 2);
-				}else if(chann == 7){
+				}
+				else if(chann == 6){
 					ca.setDiameter(value*20); 
+				}
+				else if(chann == 3){
+					if(listeners.size()==0)
+						ca.setCenterX((2f * ((float)value/127f)) - .5 );
+					else
+						for (ArrayList hl : listeners)
+							((ControlListener)hl.get(0)).knob2Event("deltaX", value * 2 );
+				}
+				else if(chann == 7){
+					if(listeners.size()==0)
+						ca.setCenterY((2f * ((float)value/127f)) - .5 );
+					else
+						for (ArrayList hl : listeners)
+							((ControlListener)hl.get(0)).knob2Event("deltaY", value * 2);
+				}
+				else if(chann == 4){
+					//if(listeners.size()==0)
+				//	;
+				//	else
+						for (ArrayList hl : listeners)
+								((ControlListener)hl.get(0)).knob2Event("inflateX", value / 12.7);
 				}else if(chann == 8){
-					vw2.setScale(zoom[int(value * ratio_ratio)]); 
+				//	if(listeners.size()==0)
+				//	;
+				//	else
+						for (ArrayList hl : listeners)
+								((ControlListener)hl.get(0)).knob2Event("inflateY", value / 12.7);
 				}
 			break;
 			case 0: /* tap1 */
@@ -152,6 +172,8 @@ class ControlChannel{
 					cc.get("1 4").addListener(o, "blue");
 					cc.get("1 5").addListener(o, "sldr1");
 					cc.get("1 6").addListener(o, "sldr2");
+					cc.get("1 7").addListener(o, "");
+					cc.get("1 8").addListener(o, "");
 				} else {
 					o.controlled = false;
 					cc.get("1 1").removeListener(o);
@@ -160,6 +182,8 @@ class ControlChannel{
 					cc.get("1 4").removeListener(o);
 					cc.get("1 5").removeListener(o);
 					cc.get("1 6").removeListener(o);
+					cc.get("1 7").removeListener(o);
+					cc.get("1 8").removeListener(o);
 				}
 			break;
 			
