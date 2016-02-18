@@ -1,0 +1,148 @@
+if (channel == 0) {/* KORG */
+		if (number>= 120) {
+			number -=8;
+		} else if (number>= 113) {
+			number +=28;
+		} else {
+			number --;
+		}
+		int scene = 1+(number / 4)/7;
+		int chann = 1+(number / 4)%7;
+		int button = number % 4;
+
+		print(button);
+		println(value);
+
+		cc.get("1 1").update(button, value);
+
+		/*
+		switch(scene) {
+			case 1: 
+				switch(chann) {
+					case 1 :
+					{
+						if(button == 0)
+						{
+							if(value == 0){
+								for (int i = 0; i < oscCtr.size(); i ++) {
+									oscCtr.get(i).setWave("SIN");
+								}
+							}else{
+								for (int i = 0; i < oscCtr.size(); i ++) {
+									oscCtr.get(i).setWave("SAW_TOOTH");
+								}
+							}
+						}
+						else if(button == 1)
+						{
+							if(value == 0){
+								for (int i = 0; i < oscCtr.size(); i ++) {
+									oscCtr.get(i).setWave("TRIANGLE");
+								}
+							}else{
+								for (int i = 0; i < oscCtr.size(); i ++) {
+									oscCtr.get(i).setWave("SQUARE");
+								}
+							}
+						}
+						else if(button == 2)
+						{
+							for (int i = 0; i < oscCtr.size(); i ++) {
+								oscCtr.get(i).sldrA.setValue(value/127.0f);
+							}
+						}
+						else if(button == 3)
+						{
+							println(value-127/2);
+						}
+					}
+					break;
+					case 2: 
+						if(button == 2)
+						{
+							for (int i = 0; i < oscCtr.size(); i ++) {
+								oscCtr.get(i).sldrR.setValue(value/127.0f);
+							}
+						}
+					break;
+					case 3: 
+						if(button == 2)
+						{
+							for (int i = 0; i < oscCtr.size(); i ++) {
+								oscCtr.get(i).sldrG.setValue(value/127.0f);
+							}
+						}
+					break;
+					case 4: 
+						if(button == 2)
+						{
+							for (int i = 0; i < oscCtr.size(); i ++) {
+								oscCtr.get(i).sldrB.setValue(value/127.0f);
+							}
+						}
+					break;
+					case 5 :
+					{
+						if(button == 2)
+						{
+							for (int i = 0; i < oscCtr.size(); i ++) {
+								oscCtr.get(i).sldr1.setValue(value/127.0f);
+							}
+						}
+					}
+					break;
+					case 6: 
+						if(button == 2)
+						{
+							for (int i = 0; i < oscCtr.size(); i ++) {
+								oscCtr.get(i).sldr2.setValue(value/127.0f);
+							}
+						}
+					break;
+				}
+				break;
+				case 5: 
+					switch(chann) {
+						case 1 :
+						{
+							int white = 0, alpha = 0;
+							if (button == 3) {
+								white = max(min(255, value*2), 0);
+								alpha = max(min(255, bg >> 24 & 0xFF), 0);
+							} else if (button == 2) {
+								white = max(min(255, bg >> 16 & 0xFF), 0);
+								alpha = max(min(255, 255 - (value*2)), 0);
+							}
+							bg = alpha << 24 | white << 16 | white << 8 | white;
+						}
+						break;
+						case 2 :
+						{
+							int white = 0, alpha = 0;
+							if (button == 3) {
+								white = max(min(255, value*2), 0);
+								alpha = max(min(255, fg >> 24 & 0xFF), 0);
+							} else if (button == 2) {
+								white = max(min(255, fg >> 16 & 0xFF), 0);
+								alpha = max(min(255, 255 - (value*2)), 0);
+							}
+							fg = alpha << 24 | white << 16 | white << 8 | white;
+						}
+						break;
+					}
+				break;
+			}
+			*/
+		} else if (channel == 1) { /* AKAI */
+			if(number < 8){
+				if (value == 0) {
+					oscCtrRemove(number-1);
+					println(oscCtr);
+				} else if(number < osc.size()){
+					oscCtr.add(osc.get(number-1));
+					println(oscCtr);
+				}
+			}else if(number < 15){
+
+			}
+		}
