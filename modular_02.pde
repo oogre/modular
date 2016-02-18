@@ -30,7 +30,7 @@ void setup() {
   colorMode(RGB, 1, 1, 1, 1);
 
   vw = new VideoWall(this, 1, height, height);
-  vw.setScale(zoom[0]); 
+  vw.setScale(zoom[1]); 
   vw2 = new VideoWall(this, 1, height, height);
   vw2.setScale(zoom[0]); 
 

@@ -52,7 +52,7 @@ public void setup() {
   colorMode(RGB, 1, 1, 1, 1);
 
   vw = new VideoWall(this, 1, height, height);
-  vw.setScale(zoom[0]); 
+  vw.setScale(zoom[1]); 
   vw2 = new VideoWall(this, 1, height, height);
   vw2.setScale(zoom[0]); 
 
@@ -115,10 +115,11 @@ public void draw() {
 }
 class Caleidoscop{
 
-	float alpha = TWO_PI/4.0f;
+	float alpha = TWO_PI/2.0f;
 	PGraphics i;
 	int width, height, ox, oy;
 	float d;
+	float THREE_HALF_PI = 3f * HALF_PI;
 	Caleidoscop (PApplet self, int w, int h){
 		this.width = w;
 		this.height = h;
@@ -128,6 +129,12 @@ class Caleidoscop{
 		i = createGraphics(this.width, this.height, P3D);
 	}
 
+	public void setCenterX(float v){
+		this.ox = (int) (this.width / 2.0f) + (int) (this.width * v);
+	}
+	public void setCenterY(float v){
+		this.oy = (int) (this.height / 2.0f) + (int) (this.height * v);
+	}
 	public void setAlpha(int n){
 		alpha = TWO_PI/(float)n;
 	}
@@ -136,29 +143,43 @@ class Caleidoscop{
 	}
 
 	public PImage get(PImage img) {
-		if(alpha >= PI)return img;
+		if(alpha > PI)return img;
 		i.beginDraw();
 		mateColor(i, bg);
 		int c = 0;
-		for (float a = 0; a < TWO_PI ; a+=alpha) {
-			c++;
+		if(alpha == PI){
 			i.pushMatrix();
 			i.translate(ox, oy);
-			i.rotateZ(alpha/2);
-			if (c%2==0) {
-			  i.rotateY(PI);
-			}
+			i.rotateZ(alpha/4);
 			i.noStroke();
 			i.textureMode(NORMAL);
 			i.beginShape();
 			i.texture(img);
-			i.vertex(0, 0, 0, 0);
-			i.vertex(d * sin(a-(alpha/2)), d * cos(a-(alpha/2)), 1, 0);
-			i.vertex(d * sin(a+(alpha/2)), d * cos(a+(alpha/2)), 0, 1);
+			i.vertex(d * sin(0)            , d * cos(0)            , 1, 1);
+			i.vertex(d * sin(HALF_PI)      , d * cos(HALF_PI)      , 0, 1);
+			i.vertex(d * sin(PI)           , d * cos(PI)           , 0, 0);
+			i.vertex(d * sin(THREE_HALF_PI), d * cos(THREE_HALF_PI), 1, 0);
 			i.endShape(CLOSE);
-
 			i.popMatrix();
-			
+		}else{
+			for (float a = 0; a < TWO_PI ; a+=alpha) {
+				c++;
+				i.pushMatrix();
+				i.translate(ox, oy);
+				i.rotateZ(alpha/2);
+				if (c%2==0) {
+				  i.rotateY(PI);
+				}
+				i.noStroke();
+				i.textureMode(NORMAL);
+				i.beginShape();
+				i.texture(img);
+				i.vertex(0, 0, 0, 0);
+				i.vertex(d * sin(a-(alpha/2)), d * cos(a-(alpha/2)), 1, 0);
+				i.vertex(d * sin(a+(alpha/2)), d * cos(a+(alpha/2)), 0, 1);
+				i.endShape(CLOSE);
+				i.popMatrix();
+			}
 		}
 		i.endDraw();
 		return i ;
@@ -265,9 +286,15 @@ class ControlChannel{
 				if(chann == 1){
 					vw.setScale(zoom[PApplet.parseInt(value * ratio_ratio)]); 
 				}else if(chann == 2){
+					if(listeners.size()==0)
+						ca.setCenterX((2f * ((float)value/127f)) - 1f );
+					else
 					for (ArrayList hl : listeners)
 							((ControlListener)hl.get(0)).knob2Event("inflateX", value / 12.7f);
 				}else if(chann == 3){
+					if(listeners.size()==0)
+						ca.setCenterY((2f * ((float)value/127f)) - 1f );
+					else
 					for (ArrayList hl : listeners)
 							((ControlListener)hl.get(0)).knob2Event("inflateY", value / 12.7f);
 				}else if(chann == 4){
@@ -510,7 +537,7 @@ class Osc implements ControlListener{
 				for (int y = 0; y < i.height; y ++) {
 					float inflate = inflateY == 0 && inflateX == 0 ? 1 : inflate_vector.magSq()/2f;
 					float V  = invert ? 1 - this.getValue() : this.getValue();
-					int X  = x + (int)deltaX; 
+					int X  = x + (int)deltaX + x; 
 					int Y = y + (int)deltaY; 
 					if (X >= i.width || X < 0) X %= i.width;
 					if (Y >= i.height || Y < 0) Y %= i.height;
@@ -569,10 +596,13 @@ class Osc implements ControlListener{
 			float x_norm_inc = inflateX / (float)i.width;
 			float y_norm_inc = inflateY / (float)i.height;
 			PVector inflate_vector = new PVector(0, 0);
+			float dX=0;
+			float dY=0;
 			for (int y = 0; y < i.height; y ++) {
 				this.update();
 				float G = this.getValue();
 				PVector o = new PVector(G, G);
+				
 				for (int x = 0; x < i.width; x ++) {
 					float inflate = inflateY == 0 && inflateX == 0 ? 1 : inflate_vector.magSq()/2f;
 					PVector v = new PVector((float)x/(float)i.width, (float)y/(float)i.height);
@@ -580,8 +610,10 @@ class Osc implements ControlListener{
 					float V = G * sin((G + v.magSq())* TWO_PI);
 					V = min(max(V, 0), 1);
 					V = invert ? 1- V : V ;
-					int X  = x + (int)deltaX; 
-					int Y = y + (int)deltaY; 
+					dX += (float)1 * (float)mouseX/(float)width;
+					dY += (float)1 * (float)mouseY/(float)height;
+					int X = (int) (deltaX + x + (int)dX); 
+					int Y = (int) (deltaY + y + (int)dY); ; 
 					if (X >= i.width || X < 0) X %= i.width;
 					if (Y >= i.height || Y < 0) Y %= i.height;
 					int N = min(max(X + (Y * i.width), 0), i.pixels.length-1);

@@ -99,9 +99,15 @@ class ControlChannel{
 				if(chann == 1){
 					vw.setScale(zoom[int(value * ratio_ratio)]); 
 				}else if(chann == 2){
+					if(listeners.size()==0)
+						ca.setCenterX((2f * ((float)value/127f)) - 1f );
+					else
 					for (ArrayList hl : listeners)
 							((ControlListener)hl.get(0)).knob2Event("inflateX", value / 12.7);
 				}else if(chann == 3){
+					if(listeners.size()==0)
+						ca.setCenterY((2f * ((float)value/127f)) - 1f );
+					else
 					for (ArrayList hl : listeners)
 							((ControlListener)hl.get(0)).knob2Event("inflateY", value / 12.7);
 				}else if(chann == 4){
